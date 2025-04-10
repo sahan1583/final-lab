@@ -1,5 +1,8 @@
 from django.db import models
 import os
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 class Case(models.Model):
@@ -7,8 +10,9 @@ class Case(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     location = models.URLField()
+    phone_number = models.CharField(max_length=10)
     image = models.ImageField(upload_to='static/case_images/')
-    status = models.CharField(max_length=100,default="Pending")
+    status = models.CharField(max_length=100,default="open")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     approved = models.BooleanField(default=False)
@@ -34,6 +38,7 @@ class CaseUpdate(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='static/case_images/', blank=True, null=True)  # Optional image
     updated_by = models.CharField(max_length=100, default="Admin")
+    phone_number = models.CharField(max_length=10)
 
     def __str__(self):
         return f"Update for {self.case.title} on {self.timestamp}"
@@ -44,3 +49,21 @@ class CaseUpdate(models.Model):
             if os.path.isfile(self.image.path):
                 os.remove(self.image.path)
         super().delete(*args, **kwargs)
+
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+# Automatically create/update UserProfile when User is created/updated
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    else:
+        instance.userprofile.save()

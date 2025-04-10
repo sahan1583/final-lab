@@ -1,89 +1,312 @@
 {% extends 'index.html' %}
-{% block title %} Member Signup {% endblock title %}
+{% block title %}Member Signup{% endblock title %}
 {% block content %}
-
 {% load widget_tweaks %}
-  <style type="text/css">
 
-    a:link {
-      text-decoration: none;
-    }
-
-    .note {
-      text-align: center;
-      height: 80px;
-      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
-      color: #fff;
-      font-weight: bold;
-      line-height: 80px;
-    }
-
-    .form-content {
-      padding: 5%;
-      border: 1px solid #ced4da;
-      margin-bottom: 2%;
-    }
-
-    .form-control {
-      border-radius: 1.5rem;
-    }
-
-    .btnSubmit {
-      border: none;
-      border-radius: 1.5rem;
-      padding: 1%;
-      width: 20%;
-      cursor: pointer;
-      background: #0062cc;
-      color: #fff;
-    }
-  </style>
-
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
+<style>
+  /* Modern form styling */
+  .signup-container {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 0;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
   
+  .signup-header {
+    text-align: center;
+    padding: 25px 0;
+    background: linear-gradient(135deg, #4070f4, #8811c5);
+    color: #fff;
+    position: relative;
+  }
+  
+  .signup-header h3 {
+    font-weight: 600;
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: 0.5px;
+  }
+  
+  .signup-header p {
+    margin: 10px 0 0;
+    font-size: 16px;
+    opacity: 0.8;
+  }
+  
+  .signup-form {
+    padding: 35px 40px 40px;
+  }
+  
+  .form-row {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+  }
+  
+  .form-control:focus {
+    border-color: #4070f4;
+    box-shadow: 0 0 0 3px rgba(64, 112, 244, 0.15);
+    outline: none;
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, #4070f4, #8811c5);
+    color: white;
+    border: none;
+    {% comment %} padding: 14px 25px; {% endcomment %}
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #666;
+  }
+  
+  .form-footer a {
+    color: #4070f4;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .form-footer a:hover {
+    color: #8811c5;
+    text-decoration: underline;
+  }
+  
+  /* Input icon styling */
+  .input-group {
+    position: relative;
+    display: flex;
+    width: 100%;
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: -15px;
+    top: -50%;
+    {% comment %} transform: translateY(-55%); {% endcomment %}
+    {% comment %} transform: translateX(-50%); {% endcomment %}
+    color: #999;
+    z-index: 10;
+  }
+  
+  .input-with-icon {
+    padding-left: 45px !important;
+  }
+  
+  /* Field validation styling */
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  
+  .invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .signup-container {
+    animation: fadeIn 0.6s ease forwards;
+  }
+</style>
 
-  <!--- signup page for admin by admin    ---------->
-  <form method="post">
+<div class="signup-container">
+  <div class="signup-header">
+    <h3>Member Registration</h3>
+    <p>Create an account to join our community</p>
+  </div>
+  
+  <form method="post" class="signup-form">
     {% csrf_token %}
-    <div class="container register-form">
-      <div class="form">
-        <div class="note">
-          <p>Add New Member</p>
-        </div>
-
-        <div class="form-content">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.first_name class="form-control" placeholder="First Name" %}
-              </div>
-              <div class="form-group">
-                {% render_field form.username class="form-control" placeholder="Username" %}
-              </div>
-
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.last_name class="form-control" placeholder="Last Name" %}
-              </div>
-              <div class="form-group">
-                {% render_field form.password class="form-control" placeholder="Password" %}
-              </div>
-
-            </div>
+    
+    <div class="row form-row">
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.first_name.id_for_label }}">First Name</label>
+          <div class="input-group">
+            <i class="fa fa-user input-icon"></i>
+            {% render_field form.first_name class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Enter your first name" %}
           </div>
-          <button type="submit" class="btnSubmit">Submit</button>
-          <div class="text-center">Already have an account? <a href="/memberlogin">Login here</a></div>
+          {% if form.first_name.errors %}
+            <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+          <div class="input-group">
+            <i class="fa fa-user input-icon"></i>
+            {% render_field form.last_name class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Enter your last name" %}
+          </div>
+          {% if form.last_name.errors %}
+            <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
+          {% endif %}
         </div>
       </div>
     </div>
-
+    
+    <div class="row form-row">
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          <div class="input-group">
+            <i class="fa fa-id-card input-icon"></i>
+            {% render_field form.username class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Choose a username" %}
+          </div>
+          {% if form.username.errors %}
+            <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+          <div class="input-group">
+            <i class="fa fa-phone input-icon"></i>
+            {% render_field form.phone_number class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Enter your phone number" %}
+          </div>
+          {% if form.phone.errors %}
+            <div class="invalid-feedback d-block">{{ form.phone_.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="row form-row">
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          <div class="input-group">
+            <i class="fa fa-lock input-icon"></i>
+            {% render_field form.password class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Create a password" type="password" %}
+          </div>
+          {% if form.password.errors %}
+            <div class="invalid-feedback d-block">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+          <div class="input-group">
+            <i class="fa fa-lock input-icon"></i>
+            {% render_field form.password2 class="form-control input-with-icon"|add:form.username.errors|yesno:" is-invalid," placeholder="Confirm your password" type="password" %}
+          </div>
+          {% if form.password2.errors %}
+            <div class="invalid-feedback d-block">{{ form.password2.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="row form-row justify-content-center mt-4">
+      <div class="col-md-6 text-center">
+        <button type="submit" class="btn-submit">
+          <i class="fa fa-user-plus mr-2"></i> Create Account
+        </button>
+      </div>
+    </div>
+    
+    <div class="form-footer">
+      Already have an account? <a href="/memberlogin">Sign in</a>
+    </div>
   </form>
+</div>
 
-
-
+<script>
+  // Simple client-side validation (you should also have server-side validation)
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(event) {
+      let hasError = false;
+      const inputs = form.querySelectorAll('.form-control');
+      
+      inputs.forEach(input => {
+        if (input.value.trim() === '') {
+          input.classList.add('is-invalid');
+          hasError = true;
+        } else {
+          input.classList.remove('is-invalid');
+        }
+      });
+      
+      // Phone number validation
+      const phoneInput = form.querySelector('[name="phone_number"]');
+      if (phoneInput && phoneInput.value.trim() !== '') {
+        const phonePattern = /^[0-9]{10,15}$/;
+        if (!phonePattern.test(phoneInput.value.replace(/[^0-9]/g, ''))) {
+          phoneInput.classList.add('is-invalid');
+          
+          // Create validation message if not exists
+          let feedback = phoneInput.parentNode.parentNode.querySelector('.invalid-feedback');
+          if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            phoneInput.parentNode.parentNode.appendChild(feedback);
+          }
+          
+          feedback.textContent = 'Please enter a valid phone number';
+          hasError = true;
+        }
+      }
+      
+      if (hasError) {
+        event.preventDefault();
+      }
+    });
+    
+    // Remove invalid class on input
+    const inputs = form.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+      input.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+      });
+    });
+  });
+</script>
 {% endblock content %}

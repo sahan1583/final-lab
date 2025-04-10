@@ -1,0 +1,527 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}{{ member.first_name }} {{ member.last_name }} - Details{% endblock title %}
+
+{% block content %}
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Breadcrumb -->
+    <div class="col-12 mb-4">
+      <div aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light py-2 px-3 rounded">
+          <li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'memberlist' %}">Members</a></li>
+          <li class="breadcrumb-item active">{{ member.first_name }} {{ member.last_name }}</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Member Profile Card -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-user mr-2"></i>Member Profile
+          </h6>
+          {% comment %} <div class="dropdown">
+            <button class="btn btn-sm btn-link text-muted" type="button" id="memberOptionsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="memberOptionsDropdown">
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-edit mr-2 text-warning"></i>Edit Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#statusChangeModal">
+                {% if member.is_active %}
+                <i class="fas fa-user-slash mr-2 text-danger"></i>Deactivate Account
+                {% else %}
+                <i class="fas fa-user-check mr-2 text-success"></i>Activate Account
+                {% endif %}
+              </a>
+            </div>
+          </div> {% endcomment %}
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="avatar-circle mx-auto mb-3">
+                {{ member.first_name|first|upper }}{{ member.last_name|first|upper }}
+                </div>
+                <h4 class="font-weight-bold">{{ member.first_name }} {{ member.last_name }}</h4>
+                <p class="text-muted mb-1">@{{ member.username }}</p>
+                <span class="badge {% if member.is_active %}badge-success{% else %}badge-danger{% endif %} px-3 py-2">
+                {% if member.is_active %}
+                <i class="fas fa-check-circle mr-1"></i>Active
+                {% else %}
+                <i class="fas fa-times-circle mr-1"></i>Inactive
+                {% endif %}
+                </span>
+            </div>
+          
+          <hr>
+          
+           <div class="member-info">
+                <div class="info-item d-flex mb-3">
+                    <div class="info-icon">
+                        <i class="fas fa-phone text-primary"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6 class="mb-1">Phone Number</h6>
+                        <p class="mb-0">{{ member.userprofile.phone_number|default:"Not provided" }}</p>
+                    </div>
+                </div>
+            
+                <div class="info-item d-flex mb-3">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope text-primary"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6 class="mb-1">Email Address</h6>
+                        <p class="mb-0">{{ member.email|default:"Not provided" }}</p>
+                    </div>
+                </div>
+            
+                <div class="info-item d-flex mb-3">
+                    <div class="info-icon">
+                        <i class="fas fa-calendar-plus text-primary"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6 class="mb-1">Join Date</h6>
+                        <p class="mb-0">{{ member.date_joined|date:"d M Y" }}</p>
+                    </div>
+                </div>
+            
+                <div class="info-item d-flex mb-3">
+                    <div class="info-icon">
+                        <i class="fas fa-clock text-primary"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6 class="mb-1">Last Login</h6>
+                        <p class="mb-0">{{ member.last_login|date:"d M Y, h:i A"|default:"Never" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white text-center py-3">
+          <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#statusChangeModal">
+            {% if member.is_active %}
+            <i class="fas fa-user-slash mr-1"></i>Deactivate Member
+            {% else %}
+            <i class="fas fa-user-check mr-1"></i>Activate Member
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Activity Summary Card -->
+    <div class="col-lg-8">
+      <div class="row">
+        <!-- Cases Created Card -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                    Cases Created
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ cases|length }}</div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-folder-plus fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cases Updated Card -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                    Case Updates
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ update_cases|length }}</div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-folder-open fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tabs for Cases -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <ul class="nav nav-tabs card-header-tabs" id="caseTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="created-tab" data-toggle="tab" href="#created" role="tab" aria-controls="created" aria-selected="true">
+                            <i class="fas fa-folder-plus mr-1"></i>Created Cases
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="updated-tab" data-toggle="tab" href="#updated" role="tab" aria-controls="updated" aria-selected="false">
+                            <i class="fas fa-history mr-1"></i>Updated Cases
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        <div class="card-body">
+            <div class="tab-content" id="caseTabsContent">
+                <!-- Created Cases Tab -->
+                <div class="tab-pane fade show active" id="created" role="tabpanel" aria-labelledby="created-tab">
+                    {% if cases %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="createdCasesTable" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Case ID</th>
+                                        <th>Title</th>
+                                        <th>Created On</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for case in cases %}
+                                    <tr>
+                                        <td><span class="font-weight-bold">{{ case.id }}</span></td>
+                                        <td>{{ case.title }}</td>
+                                        <td>{{ case.created|date:"d M Y" }}</td>
+                                        <td>
+                                            <span class="badge badge-pill 
+                                            {% if case.approved %}
+                                                {% if case.status == 'open' %}badge-primary
+                                                {% elif case.status == 'close' %}badge-secondary
+                                                {% comment %} {% elif case.status == 'In Progress' %}badge-info
+                                                {% elif case.status == 'On Hold' %}badge-warning {% endcomment %}
+                                                {% else %}badge-light
+                                                {% endif %}">
+                                                {{ case.status }}
+                                            {% else %}
+                                                badge-info
+                                                <span class="badge badge-pill badge-info">Pending Approval</span>
+                                            {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'case_details' case.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5>No Cases Created</h5>
+                            <p class="text-muted">This member hasn't created any cases yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            
+                <!-- Updated Cases Tab -->
+                <div class="tab-pane fade" id="updated" role="tabpanel" aria-labelledby="updated-tab">
+                    {% if update_cases %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="updatedCasesTable" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                <th>Case ID</th>
+                                <th>Case Title</th>
+                                <th>Updated On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for update in update_cases %}
+                                <tr>
+                                <td><span class="font-weight-bold">{{ update.case.id }}</span></td>
+                                <td>{{ update.case.title }}</td>
+                                <td>{{ update.timestamp|date:"d M Y, h:i A" }}</td>
+                                <td>
+                                    <span class="badge badge-pill 
+                                    {% if update.case.approved %}
+                                        {% if update.case.status == 'open' %}badge-primary
+                                        {% elif update.case.status == 'close' %}badge-secondary
+                                        {% comment %} {% elif update.case.status == 'In Progress' %}badge-info
+                                        {% elif update.case.status == 'On Hold' %}badge-warning {% endcomment %}
+                                        {% else %}badge-light
+                                        {% endif %}">
+                                        {{ update.case.status }}
+                                    {% else %}
+                                        badge-info
+                                        <span class="badge badge-pill badge-info">Pending Approval</span>
+                                    {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'case_details' update.case.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <h5>No Case Updates</h5>
+                            <p class="text-muted">This member hasn't updated any cases yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Change Modal -->
+<div class="modal fade" id="statusChangeModal" tabindex="-1" role="dialog" aria-labelledby="statusChangeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusChangeModalLabel">
+          {% if member.is_active %}
+          Deactivate Member
+          {% else %}
+          Activate Member
+          {% endif %}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-3">
+          {% if member.is_active %}
+          <i class="fas fa-user-slash text-danger fa-3x"></i>
+          {% else %}
+          <i class="fas fa-user-check text-success fa-3x"></i>
+          {% endif %}
+        </div>
+        <p>Are you sure you want to 
+          <strong>
+            {% if member.is_active %}deactivate{% else %}activate{% endif %} 
+            {{ member.first_name }} {{ member.last_name }}'s
+          </strong> 
+          account?
+        </p>
+        {% if member.is_active %}
+        <p class="text-muted small">This will prevent the member from logging in and accessing the system.</p>
+        {% else %}
+        <p class="text-muted small">This will allow the member to log in and access the system again.</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <i class="fas fa-times mr-1"></i>Cancel
+        </button>
+        <form method="post" >
+          {% csrf_token %}
+          <button type="submit" class="btn {% if member.is_active %}btn-danger{% else %}btn-success{% endif %}">
+            {% if member.is_active %}
+            <i class="fas fa-user-slash mr-1"></i>Deactivate
+            {% else %}
+            <i class="fas fa-user-check mr-1"></i>Activate
+            {% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialize DataTables
+    $('#createdCasesTable').DataTable({
+      "pageLength": 5,
+      "language": {
+        "search": "Search cases:",
+        "paginate": {
+          "previous": "<i class='fas fa-chevron-left'></i>",
+          "next": "<i class='fas fa-chevron-right'></i>"
+        }
+      }
+    });
+    
+    $('#updatedCasesTable').DataTable({
+      "pageLength": 5,
+      "language": {
+        "search": "Search updates:",
+        "paginate": {
+          "previous": "<i class='fas fa-chevron-left'></i>",
+          "next": "<i class='fas fa-chevron-right'></i>"
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  /* General styling */
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .container-fluid {
+    {% comment %} margin-left: 20px; {% endcomment %}
+    padding-top: 20px;
+    padding-left: 30px;
+  }
+  
+  /* Avatar styling */
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #4e73df;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+  
+  /* Member info styling */
+  .member-info .info-item {
+    align-items: center;
+  }
+  
+  .member-info .info-icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(78, 115, 223, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+  }
+  
+  .member-info .info-icon i {
+    font-size: 1rem;
+  }
+  
+  .member-info .info-content h6 {
+    font-size: 0.8rem;
+    color: #858796;
+    margin-bottom: 5px;
+  }
+  
+  .member-info .info-content p {
+    font-weight: 500;
+    color: #5a5c69;
+  }
+  
+  /* Card styling */
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: none;
+  }
+  
+  .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+  }
+  
+  /* Sidebar styling */
+  .border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+  }
+  
+  .border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+  }
+  
+  /* Badge styling */
+  .badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  
+  /* Tab styling */
+  .nav-tabs .nav-link {
+    font-weight: 600;
+    color: #6e707e;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #4e73df;
+    border-color: #e3e6f0 #e3e6f0 #fff;
+  }
+  
+  .tab-content {
+    padding-top: 20px;
+  }
+  
+  /* Table styling */
+  .table thead th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom-width: 1px;
+  }
+  
+  .table td {
+    vertical-align: middle;
+  }
+  
+  /* Breadcrumb styling */
+  .breadcrumb {
+    font-size: 0.9rem;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: -2px;
+  }
+  
+  .breadcrumb-item.active {
+    color: #5a5c69;
+    font-weight: 500;
+  }
+
+  .modal {
+    z-index: 9999 !important;
+  }
+  .modal-backdrop {
+    z-index: 9998 !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .container-fluid {
+      padding: 15px;
+    }
+  }
+</style>
+{% endblock content %}

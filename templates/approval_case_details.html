@@ -134,6 +134,7 @@
         <button type="submit" class="back-button" style="margin-left: 10px;" name="action" value="reject">Reject</button>
     </form>
     <p class="created-date"><strong>Created on:</strong> {{ case.created }}, <strong>by</strong> {{ case.created_by }}</p>
+    <p class="created-date"><strong>Phone number:</strong> {{ case.phone_number }}</p>
     {% comment %} {% if admin == "True" %}
     <form method="post">
         {% csrf_token %}

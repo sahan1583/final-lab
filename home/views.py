@@ -3,7 +3,8 @@ from django.contrib.auth.models import User, Group
 from . import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Case
+from .models import Case, UserProfile, CaseUpdate
+from django.core.paginator import Paginator
 
 # Create your views here.
 def not_logged_in(user):
@@ -30,16 +31,20 @@ def memberSignup(request):
     if request.method == 'POST':
         form = forms.MemberUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            user.set_password(user.password)
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
             user.save()
+
+            user.userprofile.phone_number = form.cleaned_data['phone_number']
+            user.userprofile.save()
+
             member_group = Group.objects.get_or_create(name='MEMBER')
             member_group[0].user_set.add(user)
             username = form.cleaned_data['username']
             messages.success(request, f'Account created successfully for {username}!')
             return HttpResponseRedirect('/memberlogin')
         else:
-            messages.error(request, 'Please correct the error below.')
+            messages.warning(request, 'Please correct the error below.')
     else:
         form = forms.MemberUserForm()
     return render(request, 'member_signup.html', {"form": form})
@@ -127,6 +132,7 @@ def caseUpdate(request, case_id):
             update = form.save(commit=False)
             update.case = case
             update.updated_by = f'{request.user.first_name} {request.user.last_name}'
+            update.phone_number = request.user.userprofile.phone_number
             update.save()
             messages.success(request, f'New update successfully added!')
             return redirect('case_details', case_id=case.id)
@@ -158,7 +164,7 @@ def registerCase(request):
             messages.success(request, f'New case successfully registered!')
             return redirect('registercase')
         else:
-            messages.error(request, 'Please correct the error below.')
+            messages.warning(request, 'Please correct the error below.')
     else:
         form = forms.CaseForm()
 
@@ -186,3 +192,38 @@ def approvalCaseDetails(request, case_id):
                 messages.success(request, f'Case successfully rejected!')
         return redirect('adminapproval')
     return render(request, 'approval_case_details.html', {'case': case, 'admin': 'True', 'base_template': 'admin_base.html'})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def memberList(request):
+    members = User.objects.filter(groups__name='MEMBER')
+    return render(request, 'admin_member_list.html', {'members': members})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def memberDetails(request, member_id):
+    if request.method == 'POST':
+        member = get_object_or_404(User, id=member_id)
+        member.is_active = not member.is_active
+        member.save()
+        if member.is_active:
+            messages.success(request, "Member activated successfully.")
+        else:
+            messages.success(request, "Member deactivated successfully.")
+            
+        
+    member = get_object_or_404(User, id=member_id)
+    cases = Case.objects.filter(created_by=f'{member.first_name} {member.last_name}')
+    update_cases = CaseUpdate.objects.filter(updated_by=f'{member.first_name} {member.last_name}')
+    
+    
+    return render(request, 'admin_member_details.html', {'member': member, 'cases': cases, 'update_cases': update_cases})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def memberDelete(request, member_id):
+    if request.method == 'POST':
+        member = get_object_or_404(User, pk=member_id)
+        member.delete()
+        messages.success(request, "Member deleted successfully.")
+    return redirect('memberlist')
