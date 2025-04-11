@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Welfare Community Chat</title>
+
+    <link rel="stylesheet" href="{% static 'chat/chat.css' %}">
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">Community Chat</div>
+    <button id="load-more-btn" class="load-more-button">Load More</button>
+    <div id="chat-box" class="chat-box"></div> 
+
+    <div class="input-container">
+        <input type="text" id="title" class="input-field" placeholder="Title" required>
+        <textarea id="description" class="input-field" placeholder="Description" required></textarea>
+        <input type="url" id="location" class="input-field" placeholder="Location URL" required>
+        <input type="file" id="image" class="input-field">
+        <button id="send-btn" class="send-button">Send</button>
+    </div>
+</div>
+
+<script src="{% static 'chat/chat.js' %}" defer></script>
+
+</body>
+</html>
+

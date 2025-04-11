@@ -1,0 +1,117 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4e1f1;
+    margin: 0;
+    padding: 20px;
+}
+
+.chat-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    max-width: 65%; /* Increased width */
+    margin: auto;
+    padding: 20px;
+    position: relative;
+}
+
+.chat-header {
+    background-color: #b03060;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 1.5em;
+    border-radius: 6px;
+}
+
+/* Styling for the Load More Button */
+.load-more-button {
+    display: block; /* Button takes full width */
+    width: calc(100% - 30px); /* Adjust width accounting for padding */
+    padding: 10px 15px;
+    margin: 0 auto 15px auto; /* Center button horizontally, add bottom margin */
+    background-color: #e9d5ff; /* Light purple */
+    color: #6b21a8; /* Darker purple text */
+    border: 1px solid #c084fc; /* Purple border */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-align: center;
+    transition: background-color 0.2s ease, opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
+    /* Initially hidden */
+    opacity: 0;
+    visibility: hidden;
+}
+
+.load-more-button:hover:not(:disabled) {
+    background-color: #d8b4fe; /* Slightly darker on hover */
+}
+
+.load-more-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.chat-box {
+    height: 450px; /* Increased height slightly */
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    background: #f9f9f9; /* Light background */
+}
+
+.message {
+    padding: 12px;
+    border-radius: 6px;
+    background-color: #e9f5ff;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    border-left: 4px solid #b03060; /* Highlight */
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-field {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 20px);
+}
+
+.send-button {
+    background-color: #b03060;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.send-button:hover {
+    background-color: #8a122c;
+}
+
+.chat-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 33vh; 
+    object-fit: contain;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+
+/* Make sure the chat works well on smaller screens */
+@media screen and (max-width: 768px) {
+    .chat-container {
+        max-width: 90%; /* Adjust for small screens */
+    }
+}
