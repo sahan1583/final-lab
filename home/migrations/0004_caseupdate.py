@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=100)),
                 ('location', models.URLField(blank=True, null=True)),
                 ('description', models.TextField()),
-                ('image', models.ImageField(blank=True, null=True, upload_to='static/case_images/')),
+                ('image', models.ImageField(blank=True, null=True, upload_to='case_images/')),
                 ('case', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='updates', to='home.case')),
             ],
         ),

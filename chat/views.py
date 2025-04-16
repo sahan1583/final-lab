@@ -39,7 +39,7 @@ from .models import ChatMessage
 def chat_messages(request):
     if request.method == "POST":
         try:
-            data = json.loads(request.body.decode("utf-8"))  # ✅ Parse JSON correctly
+            data = json.loads(request.body.decode("utf-8")) 
             title = data.get("title", "").strip()
             description = data.get("description", "").strip()
             location = data.get("location", "").strip()
@@ -65,23 +65,23 @@ def chat_messages(request):
 def upload_image(request):
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
-        # ✅ Save file properly
+        
         file_path = f"chat_images/{image_file.name}"
         saved_path = default_storage.save(file_path, ContentFile(image_file.read()))
 
-        # ✅ Generate proper media URL
+        # Generate proper media URL
         image_url = settings.MEDIA_URL + saved_path
 
-        # ✅ FIX: Ensure the URL is properly encoded **only once**
+        
         encoded_url = urllib.parse.quote(image_url, safe='/:')
 
-        print(f"✅ Image saved at: {saved_path}")
-        print(f"✅ Returning URL: {encoded_url}")
+        # print(f" Image saved at: {saved_path}")
+        # print(f" Returning URL: {encoded_url}")
 
         return JsonResponse({"image_url": encoded_url})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 def chat_widget(request):
-    messages = ChatMessage.objects.order_by('-created_at')[:15][::-1] 
+    messages = ChatMessage.objects.order_by('-created_at')[:10][::-1] 
     return render(request, 'chat_widget.html', {'messages': messages})

@@ -1,20 +1,17 @@
+{% extends 'index.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Welfare Community Chat</title>
+{% block title %}Community Chat{% endblock title %}
 
-    <link rel="stylesheet" href="{% static 'chat/chat.css' %}">
-</head>
-<body>
+{% block content %}
+{# Link to chat-specific CSS #}
+<link rel="stylesheet" href="{% static 'chat/chat.css' %}">
 
+{# Keep your existing chat container HTML #}
 <div class="chat-container">
     <div class="chat-header">Community Chat</div>
     <button id="load-more-btn" class="load-more-button">Load More</button>
-    <div id="chat-box" class="chat-box"></div> 
+    <div id="chat-box" class="chat-box"></div>
 
     <div class="input-container">
         <input type="text" id="title" class="input-field" placeholder="Title" required>
@@ -25,8 +22,7 @@
     </div>
 </div>
 
+{# Keep your existing chat script link #}
 <script src="{% static 'chat/chat.js' %}" defer></script>
 
-</body>
-</html>
-
+{% endblock content %}

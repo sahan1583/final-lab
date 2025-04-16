@@ -132,43 +132,36 @@
     }
   </style>
 
-  {% include "navbar.html" %}
-  <div class="bg"></div>
-  <div class="bg bg2"></div>
-  <div class="bg bg3"></div>
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert">
-          &times;
-        </button>
+{% include "navbar.html" %}
+<div class="bg"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+
+<!-- {# ✅ ALERT MESSAGES HANDLING — only once, outside content block #}
+{% if messages %}
+  {% for message in messages %}
+    {% if message %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
         {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    {% endfor %}
-  {% endif %}
-  {%block content%}
+    {% endif %}
+  {% endfor %}
+{% endif %} -->
 
 
-  <div class="content">
-    <h1>Animal Welfare</h1>
-    <button class="cool-button" style="margin-left: 5px;margin-bottom: 15px;" onclick="slideOut()">Let's Go</button>
-  </div>
+{# ✅ CONTENT SECTION #}
+{% block content %}
+<div class="content">
+  <h1>Animal Welfare</h1>
+  <button class="cool-button" style="margin-left: 5px;margin-bottom: 15px;" onclick="slideOut()">Let's Go</button>
+</div>
+<br><br>
+{% endblock content %}
 
-
-
-
-
-
-
-
-  <br>
-  <br>
-  {% endblock content %}
-  {% include "footer.html" %}
-  </div>
+{% include "footer.html" %}
+</div>
 </body>
-
-
-
-
 </html>

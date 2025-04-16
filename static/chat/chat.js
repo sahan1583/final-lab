@@ -37,8 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     // No initial messages, hide button
                     loadMoreButton.style.display = 'none';
                     hasMoreMessages = false;
+                    loadMoreButton.disabled = true;
+                    loadMoreButton.remove(); 
                 }
-                scrollToBottom(); // Scroll down after loading initial history
+                scrollToBottom(true); // Scroll down after loading initial history
                 break;
 
             case "older_chat_history": // Batch of older messages
@@ -48,8 +50,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.messages && data.messages.length > 0) {
                      const previousScrollHeight = chatBox.scrollHeight; // Height before adding messages
-                    data.messages.forEach(msg => appendMessage(msg, true)); // Prepend older messages
-                    oldestMessageId = data.messages[0].id; // Update oldest ID
+                    // data.messages.forEach(msg => appendMessage(msg, true)); // Prepend older messages
+                    data.messages.reverse().forEach((msg) => {
+                        appendMessage(msg, true); // Prepend in correct order
+                    });
+                    oldestMessageId = data.messages[data.messages.length - 1].id; // Update oldest ID
 
                     // Try to maintain scroll position
                     const newScrollHeight = chatBox.scrollHeight;
@@ -73,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             case "chat_message": // A single new message
                 appendMessage(data, false); // Append new message
-                scrollToBottom(); // Scroll down for new messages
+                scrollToBottom(true); // Scroll down for new messages
                 break;
 
             case "error": // Handle potential errors from backend
@@ -217,8 +222,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (prepend) {
             chatBox.insertBefore(msgElement, chatBox.firstChild); // Insert at the top
+
+            if (!oldestMessageId || (data.id && data.id < oldestMessageId)) {
+                oldestMessageId = data.id;
+            }
         } else {
-            chatBox.appendChild(msgElement); // Insert at the bottom
+            // chatBox.appendChild(msgElement); // Insert at the bottom
+            // --- Scroll handling logic ---
+            // Check if user is scrolled near the bottom BEFORE appending
+            const isNearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 150;
+
+            chatBox.appendChild(msgElement); // Append at the bottom
+
+            // Find the image within the newly added message
+            const img = msgElement.querySelector(".chat-img");
+            if (img) {
+                img.onload = () => {
+                    scrollToBottom(true); // Scroll after image loads
+                };
+                if (img.complete) {
+                    scrollToBottom(true); // Scroll immediately if image is cached
+                }
+            } else {
+                scrollToBottom(true); // No image? Just scroll down
+            }
+             
+             // --- End scroll handling ---
         }
     }
 
@@ -231,11 +260,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // --- Scrolling ---
-    function scrollToBottom() {
-        // Only scroll down if the user isn't scrolled up significantly
-        // Adjust the threshold (e.g., 100 pixels) as needed
-        if (chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 100) {
-             chatBox.scrollTop = chatBox.scrollHeight;
+    function scrollToBottom(force = false) {
+        // Only scroll down if the user isn't scrolled up significantly, OR if forced
+        // Adjust the threshold (e.g., 150 pixels) as needed
+        if (force) {
+            // Use smooth scrolling for a better experience
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            return; // Exit after forced scroll
+        }
+
+        const isNearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 150;
+        if (isNearBottom) {
+            // Use smooth scrolling for a better experience
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         }
     }
 

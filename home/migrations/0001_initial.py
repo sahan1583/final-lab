@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('case_title', models.CharField(max_length=100)),
                 ('case_description', models.TextField()),
                 ('case_location', models.URLField()),
-                ('case_image', models.ImageField(upload_to='static/case_images/')),
+                ('case_image', models.ImageField(upload_to='case_images/')),
                 ('case_status', models.CharField(max_length=100)),
                 ('case_created', models.DateTimeField(auto_now_add=True)),
                 ('case_updated', models.DateTimeField(auto_now=True)),

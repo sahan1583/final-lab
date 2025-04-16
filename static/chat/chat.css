@@ -1,8 +1,8 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4e1f1;
+    /* background-color: #f4e1f1; */
     margin: 0;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 .chat-container {
@@ -10,7 +10,9 @@ body {
     border-radius: 10px;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
     max-width: 65%; /* Increased width */
-    margin: auto;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right:  auto;
     padding: 20px;
     position: relative;
 }
@@ -53,6 +55,7 @@ body {
 }
 
 .chat-box {
+    resize: vertical;
     height: 450px; /* Increased height slightly */
     overflow-y: auto;
     scroll-behavior: smooth;
@@ -107,6 +110,10 @@ body {
     object-fit: contain;
     margin-top: 5px;
     border-radius: 5px;
+    display: block; 
+
+     min-height: 150px;
+     background-color: #eee; /* Optional: Light gray background while loading */ 
 }
 
 /* Make sure the chat works well on smaller screens */
