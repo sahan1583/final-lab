@@ -40,13 +40,13 @@ body {
     font-size: 0.9em;
     text-align: center;
     transition: background-color 0.2s ease, opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
-    /* Initially hidden */
+    
     opacity: 0;
     visibility: hidden;
 }
 
 .load-more-button:hover:not(:disabled) {
-    background-color: #d8b4fe; /* Slightly darker on hover */
+    background-color: #d8b4fe; 
 }
 
 .load-more-button:disabled {
@@ -56,7 +56,7 @@ body {
 
 .chat-box {
     resize: vertical;
-    height: 450px; /* Increased height slightly */
+    height: 450px; 
     overflow-y: auto;
     scroll-behavior: smooth;
     padding: 15px;
@@ -64,7 +64,7 @@ body {
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    background: #f9f9f9; /* Light background */
+    background: #f9f9f9;
 }
 
 .message {
@@ -73,7 +73,7 @@ body {
     background-color: #e9f5ff;
     margin-bottom: 10px;
     word-wrap: break-word;
-    border-left: 4px solid #b03060; /* Highlight */
+    border-left: 4px solid #b03060; 
 }
 
 .input-container {
@@ -113,12 +113,12 @@ body {
     display: block; 
 
      min-height: 150px;
-     background-color: #eee; /* Optional: Light gray background while loading */ 
+     background-color: #eee;
 }
 
-/* Make sure the chat works well on smaller screens */
+
 @media screen and (max-width: 768px) {
     .chat-container {
-        max-width: 90%; /* Adjust for small screens */
+        max-width: 90%; 
     }
 }

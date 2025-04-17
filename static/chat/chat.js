@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const descriptionInput = document.getElementById("description");
     const locationInput = document.getElementById("location");
     const imageInput = document.getElementById("image");
-    const loadMoreButton = document.getElementById("load-more-btn"); // Get the button
+    const loadMoreButton = document.getElementById("load-more-btn");
 
-    let oldestMessageId = null; // Store the ID of the oldest message visible
-    let isLoadingMore = false; // Flag to prevent multiple simultaneous loads
-    let hasMoreMessages = true; // Assume there are more messages initially
+    let oldestMessageId = null;
+    let isLoadingMore = false; 
+    let hasMoreMessages = true; 
 
     // --- WebSocket Connection ---
-    const socket = new WebSocket("ws://localhost:8001/ws/chat/"); // Keep your existing URL
+    const socket = new WebSocket("ws://localhost:8001/ws/chat/"); 
 
     socket.onopen = function(e) {
         console.log("WebSocket connection established");
@@ -22,68 +22,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        console.log("Message received:", data); // Debugging
+        console.log("Message received:", data); 
 
         switch (data.type) {
-            case "chat_history": // Initial batch of messages
-                chatBox.innerHTML = ''; // Clear previous messages if any
+            case "chat_history":
+                chatBox.innerHTML = ''; 
                 if (data.messages && data.messages.length > 0) {
-                    data.messages.forEach(msg => appendMessage(msg, false)); // Append initial messages
-                    oldestMessageId = data.messages[0].id; // The first message in the initial batch is the oldest
-                    // Show load more button only if initial batch potentially didn't fetch all
+                    data.messages.forEach(msg => appendMessage(msg, false)); 
+                    oldestMessageId = data.messages[0].id; 
                     loadMoreButton.style.display = 'block';
-                    hasMoreMessages = true; // Assume more unless proven otherwise
+                    hasMoreMessages = true; 
                 } else {
-                    // No initial messages, hide button
                     loadMoreButton.style.display = 'none';
                     hasMoreMessages = false;
                     loadMoreButton.disabled = true;
                     loadMoreButton.remove(); 
                 }
-                scrollToBottom(true); // Scroll down after loading initial history
+                scrollToBottom(true); 
                 break;
 
-            case "older_chat_history": // Batch of older messages
-                isLoadingMore = false; // Loading finished
-                loadMoreButton.textContent = 'Load More'; // Reset button text
+            case "older_chat_history": 
+                isLoadingMore = false; 
+                loadMoreButton.textContent = 'Load More'; 
                 loadMoreButton.disabled = false;
 
                 if (data.messages && data.messages.length > 0) {
-                     const previousScrollHeight = chatBox.scrollHeight; // Height before adding messages
-                    // data.messages.forEach(msg => appendMessage(msg, true)); // Prepend older messages
+                     const previousScrollHeight = chatBox.scrollHeight; 
+                   
                     data.messages.reverse().forEach((msg) => {
-                        appendMessage(msg, true); // Prepend in correct order
+                        appendMessage(msg, true); 
                     });
-                    oldestMessageId = data.messages[data.messages.length - 1].id; // Update oldest ID
+                    oldestMessageId = data.messages[data.messages.length - 1].id;
 
-                    // Try to maintain scroll position
                     const newScrollHeight = chatBox.scrollHeight;
                     chatBox.scrollTop += (newScrollHeight - previousScrollHeight);
 
-                     // If fewer messages than requested were loaded, assume no more older ones exist
                      if (data.messages.length < 10) {
-                        loadMoreButton.style.display = 'none'; // Hide button
+                        loadMoreButton.style.display = 'none';
                         hasMoreMessages = false;
                      } else {
-                        loadMoreButton.style.display = 'block'; // Ensure button is visible if more might exist
+                        loadMoreButton.style.display = 'block'; 
                         hasMoreMessages = true;
                      }
 
                 } else {
-                    // No older messages received, hide the button permanently
                     loadMoreButton.style.display = 'none';
                     hasMoreMessages = false;
                 }
                 break;
 
-            case "chat_message": // A single new message
-                appendMessage(data, false); // Append new message
-                scrollToBottom(true); // Scroll down for new messages
+            case "chat_message":
+                appendMessage(data, false);
+                scrollToBottom(true); 
                 break;
 
-            case "error": // Handle potential errors from backend
+            case "error": 
                 console.error("Backend Error:", data.message);
-                alert("Error: " + data.message); // Simple alert for user
+                alert("Error: " + data.message); 
                 break;
 
             default:
@@ -93,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     socket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly', e);
-        // Optionally try to reconnect or inform the user
         alert("Chat connection lost. Please refresh the page.");
     };
 
@@ -113,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Title, Description, and Location URL are required!");
             return;
         }
-        // Basic URL validation (optional, can be improved)
+      
         try {
              new URL(location);
         } catch (_) {
@@ -129,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 imageInput.value = "";
                 return;
             }
-            // Optional: Check file size
+            
              const maxSizeMB = 5;
              if (imageFile.size > maxSizeMB * 1024 * 1024) {
                  alert(`Image size exceeds ${maxSizeMB}MB limit.`);
@@ -138,10 +132,8 @@ document.addEventListener("DOMContentLoaded", function () {
              }
         }
 
-        // Prepare base message data (send type explicitly)
         let messageData = { type: "chat_message", title, description, location, image: null };
 
-        // Disable send button while processing
         sendButton.disabled = true;
         sendButton.textContent = 'Sending...';
 
@@ -151,22 +143,19 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("image", imageFile);
 
             try {
-                // Use the correct upload URL from your urls.py if it's different
                 let response = await fetch("/upload-image/", { method: "POST", body: formData });
                 let result = await response.json();
 
                 if (response.ok && result.image_url) {
-                    messageData.image = result.image_url; // Use the URL returned by the server
+                    messageData.image = result.image_url; 
                     console.log("Image uploaded, URL:", messageData.image);
                 } else {
                     console.error("Image upload failed:", result.error || 'Unknown error');
                     alert("Image upload failed. Sending message without image.");
-                    // Decide if you want to send the message without the image or stop
                 }
             } catch (error) {
                 console.error("Image upload fetch error:", error);
                 alert("Image upload failed. Sending message without image.");
-                 // Decide if you want to send the message without the image or stop
             }
         }
 
@@ -174,43 +163,37 @@ document.addEventListener("DOMContentLoaded", function () {
         if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify(messageData));
             console.log("Message sent:", messageData);
-             // Clear inputs only after successful sending confirmation (or immediately)
             titleInput.value = "";
             descriptionInput.value = "";
             locationInput.value = "";
-            imageInput.value = ""; // Clear file input
+            imageInput.value = ""; 
         } else {
             console.error("WebSocket is not open. Message not sent.");
             alert("Connection lost. Cannot send message.");
         }
-        // Re-enable send button
         sendButton.disabled = false;
         sendButton.textContent = 'Send';
 
     });
 
-    // --- Appending/Prepending Messages ---
+
     function appendMessage(data, prepend = false) {
         if (!data || !data.title || !data.description || !data.location || !data.created_at) {
             console.warn("Received incomplete message data:", data);
-            return; // Don't append incomplete messages
+            return; 
         }
 
         let imgHtml = '';
         if (data.image) {
-             // Ensure URL is correctly formed (remove potential double slashes if needed)
              let correctedImageUrl = data.image.replace(/([^:]\/)\/+/g, "$1");
-             // Decode URI Component in case URL got encoded somewhere
              let decodedImageUrl = decodeURIComponent(correctedImageUrl);
-             // Use a placeholder if the image fails to load
-             const placeholder = "/static/default-placeholder.png"; // Define your placeholder path
+             const placeholder = "/static/default-placeholder.png"; 
              imgHtml = `<img src="${decodedImageUrl}" class="chat-img" loading="lazy" onerror="this.onerror=null; this.src='${placeholder}'; console.error('Failed to load image:', this.src);" />`;
         }
 
 
         const msgElement = document.createElement("div");
         msgElement.classList.add("message");
-        // Add a data attribute to easily find the oldest message's ID later if needed
         msgElement.dataset.messageId = data.id;
         msgElement.innerHTML = `
             <strong>${escapeHTML(data.title)}</strong><br>
@@ -227,31 +210,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 oldestMessageId = data.id;
             }
         } else {
-            // chatBox.appendChild(msgElement); // Insert at the bottom
-            // --- Scroll handling logic ---
-            // Check if user is scrolled near the bottom BEFORE appending
+   
             const isNearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 150;
 
-            chatBox.appendChild(msgElement); // Append at the bottom
+            chatBox.appendChild(msgElement); 
 
-            // Find the image within the newly added message
             const img = msgElement.querySelector(".chat-img");
             if (img) {
                 img.onload = () => {
-                    scrollToBottom(true); // Scroll after image loads
+                    scrollToBottom(true); 
                 };
                 if (img.complete) {
-                    scrollToBottom(true); // Scroll immediately if image is cached
+                    scrollToBottom(true); 
                 }
             } else {
-                scrollToBottom(true); // No image? Just scroll down
+                scrollToBottom(true); 
             }
              
              // --- End scroll handling ---
         }
     }
 
-     // Helper function to escape HTML to prevent XSS
      function escapeHTML(str) {
          const div = document.createElement('div');
          div.appendChild(document.createTextNode(str));
@@ -261,29 +240,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- Scrolling ---
     function scrollToBottom(force = false) {
-        // Only scroll down if the user isn't scrolled up significantly, OR if forced
-        // Adjust the threshold (e.g., 150 pixels) as needed
         if (force) {
-            // Use smooth scrolling for a better experience
             chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-            return; // Exit after forced scroll
+            return; 
         }
 
         const isNearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 150;
         if (isNearBottom) {
-            // Use smooth scrolling for a better experience
             chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         }
     }
 
     // --- Load More Logic ---
     chatBox.addEventListener('scroll', function() {
-        // Show button if scrolled to top and not already loading and more messages might exist
         if (chatBox.scrollTop === 0 && !isLoadingMore && hasMoreMessages) {
-            loadMoreButton.style.visibility = 'visible'; // Make it visible
+            loadMoreButton.style.visibility = 'visible'; 
              loadMoreButton.style.opacity = '1';
         } else {
-            // Hide button smoothly if not at top
             loadMoreButton.style.visibility = 'hidden';
             loadMoreButton.style.opacity = '0';
         }

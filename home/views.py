@@ -63,7 +63,7 @@ def afterlogin(request):
     elif is_member(request.user):
         return redirect('memberhome')
     else:
-        return redirect('home')
+        return redirect('index')
     
 
 @login_required(login_url='adminlogin')
