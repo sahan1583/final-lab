@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from chat.views import upload_image,chat_widget
+from chat.views import upload_image,chat_widget, chat_name
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/', include('chat.urls')),
     path("upload-image/", upload_image, name="upload_image"),
     path("publicchat/", chat_widget, name="chat_widget"),
+    path("chatname/", chat_name, name="chat_name"),
 ]
 
 if settings.DEBUG:

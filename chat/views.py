@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404,render
+from django.shortcuts import get_object_or_404,render, redirect
 from .models import ChatMessage
 import json
 from django.core.files.base import ContentFile
@@ -12,6 +12,8 @@ from rest_framework import status
 from .serializers import ChatMessageSerializer
 from django.conf import settings
 import urllib.parse
+
+chat_name = ""
 
 class ChatMessageListCreateView(APIView):
     def get(self, request):
@@ -85,3 +87,20 @@ def upload_image(request):
 def chat_widget(request):
     messages = ChatMessage.objects.order_by('-created_at')[:10][::-1] 
     return render(request, 'chat_widget.html', {'messages': messages})
+
+
+def chat_name(request):
+    if request.method == "POST":
+        # Get the name from the form data
+        name = request.POST.get('userName', '')
+        
+        # Validate the name (optional)
+        if not name.strip():
+            request.session['user_name'] = "User"
+            
+        # Store the name in session
+        request.session['user_name'] = name
+        
+        # Redirect to the welcome page
+        return redirect('chat_widget')
+    return render(request, 'chat_name.html')
