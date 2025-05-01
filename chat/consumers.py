@@ -33,17 +33,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({"type": "older_chat_history", "messages": older_messages}))
 
         elif message_type == "chat_message": 
-            title = data.get("title")
+            # title = data.get("title")
+            username = data.get("username", "Anonymous")
+            print(f"--- Consumer received message. Username: {username} ---") # DEBUG
             description = data.get("description")
             location = data.get("location")
             image_url = data.get("image", None) 
 
-            if not all([title, description, location]): # Basic validation
-                    # Optionally send an error back to the user
-                    # await self.send(text_data=json.dumps({"type": "error", "message": "Missing required fields."}))
+            if not all([username, description]): # Basic validation
                     return 
 
-            message = await self.save_message(title, description, location, image_url)
+            message = await self.save_message(username, description, location, image_url)
 
             # Broadcast the new message to all users in the group
             await self.channel_layer.group_send(
@@ -59,7 +59,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         await self.send(text_data=json.dumps({
             "type": "chat_message", 
-            "title": event["title"],
+            # "title": event["title"],
+            "username": event["username"],
             "description": event["description"],
             "location": event["location"],
             "created_at": event["created_at"],
@@ -68,10 +69,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     @sync_to_async
-    def save_message(self, title, description, location, image_url):
+    def save_message(self, username, description, location, image_url):
         """ Save the message to the database """
         message = ChatMessage.objects.create(
-            title=title,
+            # title=title,
+            username=username,
             description=description,
             location=location,
             image=image_url
@@ -83,7 +85,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 image_url = image_url.replace("/media/media/", "/media/")  
 
         return {
-            "title": message.title,
+            # "title": message.title,
+            "username": message.username,
             "description": message.description,
             "location": message.location,
             "created_at": message.created_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -109,7 +112,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             serialized.append({
                 "id": msg.id, 
-                "title": msg.title,
+                # "title": msg.title,
+                "username": msg.username,
                 "description": msg.description,
                 "location": msg.location,
                 "created_at": msg.created_at.strftime("%Y-%m-%d %H:%M:%S"),

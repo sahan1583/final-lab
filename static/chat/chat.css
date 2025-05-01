@@ -1,96 +1,108 @@
+/* Original base styles */
 body {
     font-family: 'Arial', sans-serif;
-    /* background-color: #f4e1f1; */
     margin: 0;
-    /* padding: 20px; */
 }
 
 .chat-container {
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
-    max-width: 65%; /* Increased width */
+    max-width: 65%;
     margin-top: 20px;
     margin-left: auto;
     margin-right:  auto;
     padding: 20px;
     position: relative;
+    display: flex; /* Added for layout */
+    flex-direction: column; /* Added for layout */
+    height: calc(100vh - 50px); /* Example height, adjust */
+    min-height: 500px; /* Example min-height */
 }
 
 .chat-header {
-    background-color: #b03060;
+    background-color: #b03060; /* Keep original color */
     color: white;
     padding: 12px;
     text-align: center;
     font-size: 1.5em;
     border-radius: 6px;
+    margin-bottom: 15px; /* Added margin */
 }
 
-/* Styling for the Load More Button */
 .load-more-button {
-    display: block; /* Button takes full width */
-    width: calc(100% - 30px); /* Adjust width accounting for padding */
+    display: block;
+    width: calc(100% - 30px);
     padding: 10px 15px;
-    margin: 0 auto 15px auto; /* Center button horizontally, add bottom margin */
-    background-color: #e9d5ff; /* Light purple */
-    color: #6b21a8; /* Darker purple text */
-    border: 1px solid #c084fc; /* Purple border */
+    margin: 0 auto 15px auto;
+    background-color: #e9d5ff;
+    color: #6b21a8;
+    border: 1px solid #c084fc;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9em;
     text-align: center;
-    transition: background-color 0.2s ease, opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
-    
+    transition: background-color 0.2s ease, opacity 0.3s ease, visibility 0.3s ease;
     opacity: 0;
     visibility: hidden;
 }
-
 .load-more-button:hover:not(:disabled) {
-    background-color: #d8b4fe; 
+    background-color: #d8b4fe;
 }
-
 .load-more-button:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.6 !important; /* Ensure visible when disabled */
 }
 
 .chat-box {
-    resize: vertical;
-    height: 450px; 
+    /* resize: vertical; */ /* Removing resize is usually better for chat */
+    flex-grow: 1; /* Allow chat box to fill space */
+    height: auto; /* Let flexbox handle height */
     overflow-y: auto;
     scroll-behavior: smooth;
-    padding: 15px;
+    padding: 10px;
     border: 1px solid #ddd;
     margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
+    /* display: flex; */ /* Removed flex here, added to container */
+    /* flex-direction: column; */ /* Removed flex here, added to container */
     background: #f9f9f9;
 }
 
 .message {
     padding: 12px;
     border-radius: 6px;
-    background-color: #e9f5ff;
+    background-color: #e9f5ff; /* Keep original color */
     margin-bottom: 10px;
     word-wrap: break-word;
-    border-left: 4px solid #b03060; 
+    border-left: 4px solid #b03060; /* Keep original color */
+    /* Add structure for username */
+    display: flex;
+    flex-direction: column;
 }
 
 .input-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: auto; /* Pushes input to bottom */
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }
 
 .input-field {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: calc(100% - 20px);
+    width: calc(100% - 22px); /* Adjust for padding+border */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+textarea.input-field {
+    min-height: 60px; /* Ensure textarea has some height */
+    resize: vertical; /* Allow vertical resize */
 }
 
 .send-button {
-    background-color: #b03060;
+    background-color: #b03060; /* Keep original color */
     color: white;
     border: none;
     padding: 12px;
@@ -98,27 +110,53 @@ body {
     cursor: pointer;
     font-size: 1em;
 }
-
 .send-button:hover {
-    background-color: #8a122c;
+    background-color: #8a122c; /* Keep original color */
 }
 
 .chat-img {
     max-width: 100%;
-    height: auto;
-    max-height: 33vh; 
+    height: 120px;
+    width: auto;
     object-fit: contain;
     margin-top: 5px;
     border-radius: 5px;
-    display: block; 
-
-     min-height: 150px;
-     background-color: #eee;
+    display: block;
+    min-height: 50px; /* Smaller min-height example */
+    background-color: #eee;
 }
+
+/* --- Minimal styles for username display --- */
+.message-username {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+    color: #555; /* Slightly muted color */
+}
+.message-content {
+    /* Styles for the main content below username */
+    line-height: 1.4;
+    color: #333;
+}
+.message-content a {
+    color: #0069d9; /* Standard link color */
+    word-break: break-all; /* Break long links */
+}
+.message-timestamp {
+    font-size: 0.75em;
+    color: #888;
+    text-align: right;
+    margin-top: 6px;
+}
+/* ----------------------------------------- */
 
 
 @media screen and (max-width: 768px) {
     .chat-container {
-        max-width: 90%; 
+        max-width: 90%;
+        height: calc(100vh - 100px); /* Adjust height */
+    }
+    .input-field {
+         width: calc(100% - 22px);
     }
 }

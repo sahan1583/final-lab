@@ -77,30 +77,48 @@ def upload_image(request):
         
         encoded_url = urllib.parse.quote(image_url, safe='/:')
 
-        # print(f" Image saved at: {saved_path}")
-        # print(f" Returning URL: {encoded_url}")
-
         return JsonResponse({"image_url": encoded_url})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 def chat_widget(request):
-    messages = ChatMessage.objects.order_by('-created_at')[:10][::-1] 
-    return render(request, 'chat_widget.html', {'messages': messages})
+    # print(f"--- chat_widget view: Retrieving session 'user_name'. Value: {request.session.get('user_name', 'DefaultValueCheck')} ---") # DEBUG
+    user_name_value = request.session.get('user_name', 'Anonymous')
+    messages = ChatMessage.objects.order_by('-created_at')[:10][::-1]
+
+    context = {
+        'messages': messages,
+        'user_name': user_name_value  # <-- Ensure this key is exactly 'user_name'
+    }
+
+    # --- Add this print statement ---
+    # print(f"--- chat_widget view: Context being passed to template: {context} ---")
+    # --------------------------------
+
+    return render(request, 'chat_widget.html', context)
+
+    
+
+
 
 
 def chat_name(request):
     if request.method == "POST":
-        # Get the name from the form data
-        name = request.POST.get('userName', '')
-        
-        # Validate the name (optional)
-        if not name.strip():
-            request.session['user_name'] = "User"
-            
-        # Store the name in session
-        request.session['user_name'] = name
-        
-        # Redirect to the welcome page
+        print("--- chat_name view: POST request received ---")
+
+        # --- Add this line to print the raw POST data ---
+        print(f"--- Raw request.POST data: {request.POST} ---")
+        # -------------------------------------------------
+
+        name = request.POST.get('userName', '').strip()
+        # Optional: Print the retrieved value explicitly
+        print(f"--- Value retrieved for 'userName': '{name}' ---")
+
+        request.session['user_name'] = name if name else "Anonymous"
+        print(f"--- Session 'user_name' set to: {request.session['user_name']} ---")
+        print(f"--- Redirecting to chat_widget for user: {request.session['user_name']} ---")
         return redirect('chat_widget')
-    return render(request, 'chat_name.html')
+    else:
+         print("--- chat_name view: GET request received ---")
+         return render(request, 'chat_name.html')
+

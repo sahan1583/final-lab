@@ -182,13 +182,16 @@ h3 {
 <div class="content">
   <h1>Animal Welfare</h1>
   <div class="form-container">
-    <form id="nameForm" >
-      <input type="text" id="userName" class="input-field" placeholder="Please enter your name" required>
+    <!-- <form id="nameForm" > -->
+    <form id="nameForm" method="POST" action="{% url 'chat_name' %}">
+      {% csrf_token %}
+      <input type="text" id="userName" name="userName" class="input-field" placeholder="Please enter your name" required>
       <p id="error-message" class="error">Please enter your name to continue</p>
       <button type="submit" class="cool-button">Let's Begin</button>
     </form>
   </div>
-  <button class="cool-button" style="margin-left: 5px; background-color: #6a8494;" onclick="slideOut()">Skip for Now</button>
+  <!-- <button class="cool-button" style="margin-left: 5px; background-color: #6a8494;" onclick="slideOut()">Skip for Now</button> -->
+  <a href="{% url 'chat_widget' %}" class="cool-button" style="margin-left: 5px; background-color: #6a8494; text-decoration: none;">Stay Anonymous</a>
 </div>
 <br><br>
 {% endblock content %}

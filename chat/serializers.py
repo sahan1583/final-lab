@@ -6,4 +6,5 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ChatMessage
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ['id', 'username', 'description', 'location', 'image', 'created_at']
