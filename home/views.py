@@ -5,6 +5,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Case, UserProfile, CaseUpdate
 from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.core.management import call_command
+
+def run_migrations(request):
+    call_command('migrate')
+    call_command('makemigrations')
+    return HttpResponse("Migrations completed.")
+
 
 # Create your views here.
 def not_logged_in(user):

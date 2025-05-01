@@ -12,6 +12,7 @@ class CustomLoginView(LoginView):
         return super().get(request, *args, **kwargs)
 
 urlpatterns = [
+    path("run-migrations/", views.run_migrations),
     path("", views.index, name="index"),
     path("home", views.home, name="home"),
     path("afterlogin/", views.afterlogin, name="afterlogin"),
