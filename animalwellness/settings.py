@@ -77,12 +77,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'animalwellness.wsgi.application'
 ASGI_APPLICATION = 'animalwellness.asgi.application'
 
+REDIS_URL = os.environ.get('REDIS_URL', 'localhost')    
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(REDIS_URL, 6379)],
         },
     },
 }
@@ -102,7 +103,7 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
         conn_health_checks=True
     )
